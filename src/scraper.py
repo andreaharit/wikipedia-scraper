@@ -1,7 +1,8 @@
 import requests
 import json
+import sys
 
-root_url = "https://country-leaders.onrender.com"
+
 
 def write_json(dictionary, out_filename):
     # Serializing json
@@ -11,64 +12,52 @@ def write_json(dictionary, out_filename):
     with open(out_filename, "w") as outfile:
         outfile.write(json_object)
 
-class Get_names:
-
-    global root_url
+class WikipediaScraper:    
+    base_url = "https://country-leaders.onrender.com"
 
     def __init__(self) -> None:
         self.session = requests.Session()
-        self.status, self.message = self.check_api()        
+        self.cookie = self.refresh_cookie()
+        self.countries = self.get_countries()
+    
 
-    def get_request(self, endpoint, param = None):     
-        response = self.session.get(f"{root_url}/{endpoint}", params = param)
-        return response.json()
+    def refresh_cookie(self, base_url = base_url):
+        cookies_endpoint = "/cookie"
+        cookie = self.session.get(f"{base_url}{cookies_endpoint}")
+        return cookie
+
+    def get_countries (self, base_url = base_url):  
+        country_endpoint= "/countries"  
+        countries = self.session.get(f"{base_url}{country_endpoint}")
+        return countries.json()    
+      
+    def get_leaders (self, base_url = base_url, country = None):    
+        leaders_endpoint = "/leaders"    
+        leaders = self.session.get(f"{base_url}{leaders_endpoint}", params = {'country': country}) 
+        return leaders.json()
     
-    def check_api(self):
-        endpoint_status = "status"
-        status_ok = 'Alive'
-        endpoit_cookie = "cookie"
-        cookie_created = 'The cookie has been created'
-        endpoit_check_cookie = "check"
-        cookie_ok = 'The cookie is valid'
-        
-        if self.get_request(endpoint= endpoint_status) != status_ok:            
-            return 0, "API is down"        
-        if self.get_request(endpoint= endpoit_cookie)['message'] != cookie_created:
-            return 0, "Problem creating cookie"        
-        if self.get_request (endpoint= endpoit_check_cookie)['message'] != cookie_ok:
-            return 0, "Cookie is invalid"
-        else: 
-            return 1, "Stablished connection with API"
-        
-    def get_countries (self):
-        endpoint_countries = 'countries'
-        countries = self.get_request(endpoint= endpoint_countries)
-        return countries
+
     
-    def get_leaders (self, country):
-        xx= {'country': country}
-        endpoint_leaders = 'leaders'
-        leaders = self.get_request(endpoint= endpoint_leaders, param = xx)
-        return leaders
-    
-    def get_name (self, leader):        
-        return leader['first_name'] + " " + leader['last_name']
-    def get_wiki (self, leader):
+    def get_link (self, leader):
         return leader['wikipedia_url']
         
-class extract_wiki:
     
+    def get_first_paragraph(wikipedia_url: str):
+        pass
+
+    
+ 
 
 
-s = Get_names()
-b, message = s.check_api()
-if b == 1:
-    print (message)
-leaders = s.get_countries()
-ugly_json = s.get_leaders(leaders[0])
-write_json(ugly_json,"first_test.json")
-for i in ugly_json:
-    print(s.get_name(i))
-    print(s.get_wiki(i))
+
+
+s = WikipediaScraper()
+
+for country in s.countries:
+    leaders = s.get_leaders(country=country)
+    for leader in leaders:          
+        link = s.get_link(leader=leader)        
+        break
+    break
 
 
