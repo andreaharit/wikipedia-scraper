@@ -57,8 +57,8 @@ class WikipediaScraper:
             name = f"{leader['first_name']}"
         return name, leader['wikipedia_url']
         
-    
-    def get_first_paragraph(self, wikipedia_url: str):
+    @staticmethod
+    def get_first_paragraph(wikipedia_url: str):
         r = requests.get(wikipedia_url)
         soup = BeautifulSoup(r.content.decode('utf-8'), "html.parser")
 
@@ -66,9 +66,32 @@ class WikipediaScraper:
             paragraph = str(p)
             # First paragraphs contain a name in bold and a year (four numbers) for the birthdate
             if '<p>' in paragraph and '<b>' in paragraph and bool(re.search(r'\d{4}', paragraph)):                               
-                summary = p.text
-                return summary
+                first_paragraph = p.text
+                return first_paragraph
+    @staticmethod       
+    def clean_paragraph(paragraph):
+        # supress \n at the end
+        paragraph = paragraph.rstrip("\n").strip()
+        # supress lost \
+        paragraph = paragraph.replace('\\', "")
+        # corrects quotes
+        paragraph = paragraph.replace('\"', "'")
+        # supress [something]:
+        correct_1 = re.sub(r"\[.*\]","", paragraph) 
+        # suppress Écouters in french paragraphs
+        correct_2 = re.sub(r"\s\(.*Écouter\)","", correct_1)
+        correct_3 = re.sub(r"\sÉcouter?\)",'', correct_2).replace("Écouter", "")
+        # correct pronounciation strings from american leaders
+        correct_4 = re.sub(r"\(\/.*ˈ.*\;", '', correct_3)  
+        # correct pronouciation strings from dutch
+        correct_5 = re.sub(r"uitspraakⓘ", "", correct_4 )
+        # correct excess of spaces:
+        correct_6 = correct_5.replace("  "," ").replace (' ,', ",")
+        
+        
 
+        return correct_6
+        
 
             
     
@@ -101,10 +124,11 @@ def main():
 
     summaries = {}              
     for key, value in links.items():
-        summary = s.get_first_paragraph(value)
+        summary = WikipediaScraper.get_first_paragraph(value)
+        summary = WikipediaScraper.clean_paragraph (summary)
         summaries[key] = summary
 
-    out_filepath = "summaries_v2.json"   
+    out_filepath = "summaries_v3.json"   
     WikipediaScraper.to_json_file(filepath= out_filepath, summaries = summaries)
 
 
