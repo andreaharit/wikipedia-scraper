@@ -49,7 +49,7 @@ class WikipediaScraper:
             if api_status.status_code != ok_status: 
                 raise CreateError(message = "Problem connecting to API.")
             if check_cookie.status_code != ok_status:
-                raise CreateError(message = "Cookie is invalid")
+                raise CreateError(message = "Cookie is invalid.")
             # All good, returns cookie
             else:
                 print ("Connection with API was well stablished and cookie was collected.")

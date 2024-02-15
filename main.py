@@ -32,7 +32,7 @@ def main():
     
     # Exporting dictionary into json
     print ("Exporting to json file.")
-    out_filepath = "first_paragraphs.json"   
+    out_filepath = "leaders_data.json"   
     WikipediaScraper.to_json_file(filepath= out_filepath, paragraphs = paragraphs)
     print ("Finished exporting.")
 

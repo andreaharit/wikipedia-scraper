@@ -17,14 +17,14 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-2. Open the json file `first_paragraphs.json` to check the results.
+2. Open the json file `leaders_data.json` to check the results.
 
 For any questions on how to navigate and run a python file from terminal, see more [here](https://vteams.com/blog/how-to-run-a-python-script-in-terminal/#:~:text=To%20execute%20a%20Python%20script,you're%20using%20Python%203.).
 
 
 
 
-## Example
+## Visuals
 A successful terminal will look like:
 
 ```
@@ -41,7 +41,7 @@ Collecting leader's names and paragraphs.
 Exporting to json file.
 Finished exporting.
 ```
-And the outputted json file `first_paragraphs.json` might have keys and values as: 
+And the outputted json file `leaders_data.json` might have keys and values as: 
 
 ```json
 
@@ -61,7 +61,7 @@ Problem connecting to API.
 ```
 * In case the cookie for the connection has expired, or could not be collected:
 ```
-Cookie is invalid
+Cookie is invalid.
 ```
 
 
