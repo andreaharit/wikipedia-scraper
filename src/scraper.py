@@ -119,7 +119,7 @@ class WikipediaScraper:
         # Corrects quotes
         paragraph = paragraph.replace('\"', "'")
         # Deletes quotation indexes [something]:
-        correct_1 = re.sub(r"\[.*\]","", paragraph) 
+        correct_1 = re.sub(r"\[.\]","", paragraph) 
         # Deletes pronounciation blobs from french leaders
         correct_2 = re.sub(r"\s\(.*Écouter\)","", correct_1)
         correct_3 = re.sub(r"\sÉcouter?\)",'', correct_2).replace("Écouter", "")
