@@ -3,6 +3,7 @@ import json
 from bs4 import BeautifulSoup
 import sys
 import re
+import csv
 
 class CreateError(Exception):
     """
@@ -138,4 +139,18 @@ class WikipediaScraper:
             json_summaries = json.dumps(paragraphs, ensure_ascii=False, indent=4)
             jsonfile.write(json_summaries)
         jsonfile.close()
+
+    @staticmethod
+    def to_csv_file(filepath: str, paragraphs: dict) -> None:
+        """Takes a filepah, a dictionary with the paragraphs and exports them into a csv file"""
+        
+        with open(filepath, 'w', newline='', encoding= 'utf-8') as csvfile:
+            #json_summaries = json.dumps(paragraphs, ensure_ascii=False, indent=4)
+            fieldnames = ['Name', 'Paragraph']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for key in paragraphs:
+                writer.writerow({'Name': key, 'Paragraph': paragraphs[key]})    
+        csvfile.close()
+
 

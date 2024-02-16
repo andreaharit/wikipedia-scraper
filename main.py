@@ -4,9 +4,16 @@ from threading import Thread
 
 
 def build_dict (link: str, paragraphs: dict) -> None:
+    """
+    Populates paragraph dictionary with {leader name : first paragraph}
+    """
+    # Gets title and first paragraph from wiki
     dirty_paragraph, dirty_name = WikipediaScraper.get_first_paragraph(link)
+    # Cleans paragraph
     clean_paragraph = WikipediaScraper.clean_paragraph (dirty_paragraph)
+    # Gets cleans title and transforms into  name
     clean_name = WikipediaScraper.clean_name(dirty_name)
+    # Populates dictionary
     paragraphs[clean_name] = clean_paragraph 
 
 
@@ -30,10 +37,12 @@ def main():
     print("Collecting leader's names and paragraphs.")
     # Dictionary where key, value pair is leader name: first paragraph of his/her wiki
     paragraphs = {}  
+
+    # List to keep threads 
     threads = list() 
 
     # Loops each link in list with all wiki pages 
-    # Creates a thread to speed up process        
+    # Creates a threads to populate paragraphs, processing time was cut in half.   
     for link in links:
         thread = Thread(target=build_dict, args=(link, paragraphs))
         threads.append(thread)
@@ -41,16 +50,20 @@ def main():
     for thread in threads:
         thread.start()
 
-    for thread in threads:  # The second loop is necessary. start() everything then join() everything.
+    for thread in threads:  
         thread.join()
     
-  
-
     # Exporting dictionary into json
     print ("Exporting to json file.")
     out_filepath = "leaders_data.json"   
     WikipediaScraper.to_json_file(filepath= out_filepath, paragraphs = paragraphs)
-    print ("Finished exporting.")
+    print ("Finished exporting json.")
+
+    # Exporting dictionary into csv
+    print ("Exporting to csv file.")
+    out_filepath = "leaders_data.csv"   
+    WikipediaScraper.to_csv_file(filepath= out_filepath, paragraphs = paragraphs)
+    print ("Finished exporting csv.")
 
 if __name__ == "__main__":
     main()
